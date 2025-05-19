@@ -59,6 +59,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	{
 		FVector Direction = FVector(1.0f, 0.0f, 0.0f);
 		AddMovementInput(Direction, MoveActionValue);
+		UpdateDirection(MoveActionValue);
 	}
 }
 
@@ -77,4 +78,23 @@ void APlayerCharacter::JumpEnded(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
+}
+
+void APlayerCharacter::UpdateDirection(float MoveDirection)
+{
+	FRotator CurrentRotation = Controller->GetControlRotation();
+	if (MoveDirection < 0)
+	{
+		if (CurrentRotation.Yaw != 180.0f)
+		{
+			Controller->SetControlRotation(FRotator(CurrentRotation.Pitch, 180.0f, CurrentRotation.Roll));
+		}
+	}
+	else if (MoveDirection > 0)
+	{
+		if (CurrentRotation.Yaw != 0.0f)
+		{
+			Controller->SetControlRotation(FRotator(CurrentRotation.Pitch, 0.0f, CurrentRotation.Roll));
+		}
+	}
 }

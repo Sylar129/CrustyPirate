@@ -53,4 +53,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
+
+private:
+	void UpdateDirection(float MoveDirection);
 };
