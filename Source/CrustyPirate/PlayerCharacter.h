@@ -8,6 +8,9 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 
 UCLASS()
 class CRUSTYPIRATE_API APlayerCharacter : public APaperZDCharacter
@@ -20,9 +23,34 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void Move(const FInputActionValue& Value);
+	void JumpStarted(const FInputActionValue& Value);
+	void JumpEnded(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* AttackAction;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsAlive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool CanMove = true;
 };
