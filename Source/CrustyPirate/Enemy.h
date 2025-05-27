@@ -27,6 +27,8 @@ protected:
 	void DetectorOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	bool ShouldMoveToTarget() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
 

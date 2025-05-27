@@ -26,10 +26,17 @@ void AEnemy::Tick(float DeltaTime)
 	if (IsAlive && FollowTarget)
 	{
 		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0 ? 1 : -1;
-		if (CanMove)
+		if (ShouldMoveToTarget())
 		{
-			FVector WorldDirection(1, 0, 0);
-			AddMovementInput(WorldDirection, MoveDirection);
+			if (CanMove)
+			{
+				FVector WorldDirection(1, 0, 0);
+				AddMovementInput(WorldDirection, MoveDirection);
+			}
+		}
+		else
+		{
+			// attack
 		}
 	}
 }
@@ -52,4 +59,17 @@ void AEnemy::DetectorOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* O
 	{
 		FollowTarget = nullptr;
 	}
+}
+
+bool AEnemy::ShouldMoveToTarget() const
+{
+	bool Result = false;
+
+	if (FollowTarget)
+	{
+		float DistanceToTarget = std::abs(FollowTarget->GetActorLocation().X - GetActorLocation().X);
+		Result = DistanceToTarget > StopDistanceToTarget;
+	}
+
+	return Result;
 }
