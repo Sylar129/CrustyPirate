@@ -22,10 +22,34 @@ void AEnemy::BeginPlay()
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsAlive && FollowTarget)
+	{
+		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0 ? 1 : -1;
+		if (CanMove)
+		{
+			FVector WorldDirection(1, 0, 0);
+			AddMovementInput(WorldDirection, MoveDirection);
+		}
+	}
 }
 
 void AEnemy::DetectorOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult) {}
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult)
+{
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player)
+	{
+		FollowTarget = Player;
+	}
+}
 
 void AEnemy::DetectorOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {}
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player)
+	{
+		FollowTarget = nullptr;
+	}
+}
