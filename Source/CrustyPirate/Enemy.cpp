@@ -26,6 +26,7 @@ void AEnemy::Tick(float DeltaTime)
 	if (IsAlive && FollowTarget)
 	{
 		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0 ? 1 : -1;
+		UpdateDirection(MoveDirection);
 		if (ShouldMoveToTarget())
 		{
 			if (CanMove)
@@ -72,4 +73,22 @@ bool AEnemy::ShouldMoveToTarget() const
 	}
 
 	return Result;
+}
+
+void AEnemy::UpdateDirection(float MoveDirection) {
+	FRotator CurrentRotation = GetActorRotation();
+	if (MoveDirection < 0)
+	{
+		if (CurrentRotation.Yaw != 180.0f)
+		{
+			SetActorRotation(FRotator(CurrentRotation.Pitch, 180.0f, CurrentRotation.Roll));
+		}
+	}
+	else if (MoveDirection > 0)
+	{
+		if (CurrentRotation.Yaw != 0.0f)
+		{
+			SetActorRotation(FRotator(CurrentRotation.Pitch, 0.0f, CurrentRotation.Roll));
+		}
+	}
 }

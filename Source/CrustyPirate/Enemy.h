@@ -28,6 +28,7 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	bool ShouldMoveToTarget() const;
+	void UpdateDirection(float MoveDirection);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
