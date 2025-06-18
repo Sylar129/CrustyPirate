@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
+#include "PaperZDAnimInstance.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
@@ -30,6 +31,10 @@ protected:
 	void JumpEnded(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
 
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
+
+	void OnAttackOverrideAnimEnd(bool Completed);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpringArmComponent* SpringArm;
 
@@ -48,11 +53,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPaperZDAnimSequence* AttackAnimSequence;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool CanAttack = true;
 
 private:
 	void UpdateDirection(float MoveDirection);

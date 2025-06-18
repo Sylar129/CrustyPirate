@@ -30,6 +30,8 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -78,6 +80,19 @@ void APlayerCharacter::JumpEnded(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
+	if (IsAlive && CanAttack)
+	{
+		CanAttack = false;
+		CanMove = false;
+
+		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+	}
+}
+
+void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
+{
+	CanAttack = true;
+	CanMove = true;
 }
 
 void APlayerCharacter::UpdateDirection(float MoveDirection)
