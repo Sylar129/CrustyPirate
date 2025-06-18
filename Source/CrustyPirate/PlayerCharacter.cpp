@@ -3,9 +3,11 @@
 #include "PlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Enemy.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -16,6 +18,9 @@ APlayerCharacter::APlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+
+	AttackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollisionBox"));
+	AttackCollisionBox->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -31,6 +36,8 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+	EnableAttackCollisionBox(false);
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 }
 
@@ -84,8 +91,31 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 	{
 		CanAttack = false;
 		CanMove = false;
+		EnableAttackCollisionBox(true);
 
 		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+	}
+}
+
+void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult)
+{
+	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy)
+	{
+	}
+}
+
+void APlayerCharacter::EnableAttackCollisionBox(bool Enabled)
+{
+	if (Enabled)
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	}
+	else
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	}
 }
 
@@ -93,6 +123,7 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;
 	CanMove = true;
+	EnableAttackCollisionBox(false);
 }
 
 void APlayerCharacter::UpdateDirection(float MoveDirection)

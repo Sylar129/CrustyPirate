@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UBoxComponent;
 
 UCLASS()
 class CRUSTYPIRATE_API APlayerCharacter : public APaperZDCharacter
@@ -30,6 +31,12 @@ protected:
 	void JumpStarted(const FInputActionValue& Value);
 	void JumpEnded(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
+	UFUNCTION()
+	void AttackBoxOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+	void EnableAttackCollisionBox(bool Enabled);
 
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
@@ -40,6 +47,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* AttackCollisionBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* InputMappingContext;
