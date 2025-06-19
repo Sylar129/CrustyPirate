@@ -75,6 +75,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanAttack = true;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int AttackDamage = 25;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackStunDuration = 0.3f;
+
 private:
 	void UpdateDirection(float MoveDirection);
 };

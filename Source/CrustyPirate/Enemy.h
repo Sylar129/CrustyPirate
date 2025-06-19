@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class APlayerCharacter;
+class UTextRenderComponent;
 
 UCLASS()
 class CRUSTYPIRATE_API AEnemy : public APaperZDCharacter
@@ -17,6 +18,8 @@ public:
 	AEnemy();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	void TakeDamage(int DamageAmount, float StunDuration);
 
 protected:
 	UFUNCTION()
@@ -30,14 +33,22 @@ protected:
 	bool ShouldMoveToTarget() const;
 	void UpdateDirection(float MoveDirection);
 
+	void UpdateHP(int NewHP);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UTextRenderComponent* HPText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	APlayerCharacter* FollowTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistanceToTarget = 70.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int HitPoints = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsAlive = true;

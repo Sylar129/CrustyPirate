@@ -91,7 +91,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 	{
 		CanAttack = false;
 		CanMove = false;
-		//EnableAttackCollisionBox(true);
+		// EnableAttackCollisionBox(true);
 
 		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
 	}
@@ -102,6 +102,7 @@ void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlapCompone
 	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 	if (Enemy)
 	{
+		Enemy->TakeDamage(AttackDamage, AttackStunDuration);
 	}
 }
 
@@ -123,7 +124,7 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;
 	CanMove = true;
-	//EnableAttackCollisionBox(false);
+	// EnableAttackCollisionBox(false);
 }
 
 void APlayerCharacter::UpdateDirection(float MoveDirection)

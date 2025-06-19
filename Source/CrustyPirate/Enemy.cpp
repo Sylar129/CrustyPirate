@@ -4,11 +4,15 @@
 
 #include "Components/SphereComponent.h"
 #include "PlayerCharacter.h"
+#include "Components/TextRenderComponent.h"
 
 AEnemy::AEnemy()
 {
 	PlayerDetectorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	PlayerDetectorSphere->SetupAttachment(RootComponent);
+
+	HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
+	HPText->SetupAttachment(RootComponent);
 }
 
 void AEnemy::BeginPlay()
@@ -17,6 +21,8 @@ void AEnemy::BeginPlay()
 
 	PlayerDetectorSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::DetectorOverlapBegin);
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemy::DetectorOverlapEnd);
+
+	UpdateHP(HitPoints);
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -39,6 +45,31 @@ void AEnemy::Tick(float DeltaTime)
 		{
 			// attack
 		}
+	}
+}
+
+void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
+{
+	if (!IsAlive)
+	{
+		return;
+	}
+
+	UpdateHP(HitPoints - DamageAmount);
+
+	if (HitPoints > 0)
+	{
+		IsAlive = true;
+		// play the hit animation
+	}
+	else
+	{
+		IsAlive = false;
+		CanMove = false;
+		UpdateHP(0);
+		HPText->SetHiddenInGame(true);
+
+		// play the die animation
 	}
 }
 
@@ -75,7 +106,8 @@ bool AEnemy::ShouldMoveToTarget() const
 	return Result;
 }
 
-void AEnemy::UpdateDirection(float MoveDirection) {
+void AEnemy::UpdateDirection(float MoveDirection)
+{
 	FRotator CurrentRotation = GetActorRotation();
 	if (MoveDirection < 0)
 	{
@@ -91,4 +123,12 @@ void AEnemy::UpdateDirection(float MoveDirection) {
 			SetActorRotation(FRotator(CurrentRotation.Pitch, 0.0f, CurrentRotation.Roll));
 		}
 	}
+}
+
+void AEnemy::UpdateHP(int NewHP)
+{
+	HitPoints = NewHP;
+
+	FString Str = FString::Printf(TEXT("HP: %d"), HitPoints);
+	HPText->SetText(FText::FromString(Str));
 }
