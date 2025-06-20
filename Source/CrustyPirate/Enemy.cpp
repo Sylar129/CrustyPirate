@@ -3,6 +3,7 @@
 #include "Enemy.h"
 
 #include "Components/SphereComponent.h"
+#include "PaperZDAnimInstance.h"
 #include "PlayerCharacter.h"
 #include "Components/TextRenderComponent.h"
 
@@ -60,7 +61,7 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 	if (HitPoints > 0)
 	{
 		IsAlive = true;
-		// play the hit animation
+		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
 	}
 	else
 	{
@@ -69,7 +70,7 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 		UpdateHP(0);
 		HPText->SetHiddenInGame(true);
 
-		// play the die animation
+		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
 	}
 }
 
