@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
+#include "Engine/TimerHandle.h"
 #include "Enemy.generated.h"
 
 class USphereComponent;
@@ -35,6 +36,9 @@ protected:
 
 	void UpdateHP(int NewHP);
 
+	void Stun(float DurationInSeconds);
+	void OnStunTimerTimeout();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
 
@@ -54,5 +58,10 @@ protected:
 	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsStunned = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
+
+	FTimerHandle StunTimer;
 };

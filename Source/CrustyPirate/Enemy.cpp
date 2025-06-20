@@ -30,7 +30,7 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsAlive && FollowTarget)
+	if (IsAlive && FollowTarget && !IsStunned)
 	{
 		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0 ? 1 : -1;
 		UpdateDirection(MoveDirection);
@@ -62,6 +62,7 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 	{
 		IsAlive = true;
 		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
+		Stun(StunDuration);
 	}
 	else
 	{
@@ -132,4 +133,23 @@ void AEnemy::UpdateHP(int NewHP)
 
 	FString Str = FString::Printf(TEXT("HP: %d"), HitPoints);
 	HPText->SetText(FText::FromString(Str));
+}
+
+void AEnemy::Stun(float DurationInSeconds)
+{
+	IsStunned = true;
+
+	bool IsTimerAlreadyActive = GetWorldTimerManager().IsTimerActive(StunTimer);
+	if (IsTimerAlreadyActive)
+	{
+		GetWorldTimerManager().ClearTimer(StunTimer);
+	}
+
+	GetWorldTimerManager().SetTimer(StunTimer, this, &AEnemy::OnStunTimerTimeout, 1.0f, false, DurationInSeconds);
+	GetAnimInstance()->StopAllAnimationOverrides();
+}
+
+void AEnemy::OnStunTimerTimeout()
+{
+	IsStunned = false;
 }
