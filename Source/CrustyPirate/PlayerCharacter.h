@@ -24,6 +24,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsAlive = true;
+
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
@@ -65,9 +68,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperZDAnimSequence* AttackAnimSequence;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;

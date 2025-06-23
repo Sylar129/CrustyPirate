@@ -24,6 +24,8 @@ void AEnemy::BeginPlay()
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemy::DetectorOverlapEnd);
 
 	UpdateHP(HitPoints);
+
+	OnAttackOverrideEndDelegate.BindUObject(this, &AEnemy::OnAttackOverrideAnimEnd);
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -44,7 +46,10 @@ void AEnemy::Tick(float DeltaTime)
 		}
 		else
 		{
-			// attack
+			if (FollowTarget->IsAlive)
+			{
+				Attack();
+			}
 		}
 	}
 }
@@ -55,6 +60,7 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 	{
 		return;
 	}
+	Stun(StunDuration);
 
 	UpdateHP(HitPoints - DamageAmount);
 
@@ -62,12 +68,12 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 	{
 		IsAlive = true;
 		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
-		Stun(StunDuration);
 	}
 	else
 	{
 		IsAlive = false;
 		CanMove = false;
+		CanAttack = false;
 		UpdateHP(0);
 		HPText->SetHiddenInGame(true);
 
@@ -152,4 +158,33 @@ void AEnemy::Stun(float DurationInSeconds)
 void AEnemy::OnStunTimerTimeout()
 {
 	IsStunned = false;
+}
+
+void AEnemy::Attack()
+{
+	if (IsAlive && CanAttack && !IsStunned)
+	{
+		CanAttack = false;
+		CanMove = false;
+
+		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+
+		GetWorldTimerManager().SetTimer(AttackCooldownTimer, this, &AEnemy::OnAttackCooldownTimerTimeout, 1.0f, false, AttackCooldownInSeconds);
+	}
+}
+
+void AEnemy::OnAttackCooldownTimerTimeout()
+{
+	if (IsAlive)
+	{
+		CanAttack = true;
+	}
+}
+
+void AEnemy::OnAttackOverrideAnimEnd(bool Completed)
+{
+	if (IsAlive)
+	{
+		CanMove = true;
+	}
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
+#include "PaperZDAnimInstance.h"
 #include "Engine/TimerHandle.h"
 #include "Enemy.generated.h"
 
@@ -39,6 +40,12 @@ protected:
 	void Stun(float DurationInSeconds);
 	void OnStunTimerTimeout();
 
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
+
+	void Attack();
+	void OnAttackCooldownTimerTimeout();
+	void OnAttackOverrideAnimEnd(bool Completed);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
 
@@ -48,11 +55,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	APlayerCharacter* FollowTarget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPaperZDAnimSequence* AttackAnimSequence;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistanceToTarget = 70.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackCooldownInSeconds = 3.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsAlive = true;
@@ -63,5 +76,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanAttack = true;
+
 	FTimerHandle StunTimer;
+	FTimerHandle AttackCooldownTimer;
 };
