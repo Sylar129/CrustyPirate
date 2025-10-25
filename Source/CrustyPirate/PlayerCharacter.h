@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
 #include "PaperZDAnimInstance.h"
+#include "Engine/TimerHandle.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
@@ -49,6 +50,9 @@ protected:
 
 	void UpdateHP(int NewHP);
 
+	void Stun(float DurationInSeconds);
+	void OnStunTimerTimeout();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpringArmComponent* SpringArm;
 
@@ -80,6 +84,9 @@ protected:
 	bool CanAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsStunned = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -90,4 +97,6 @@ protected:
 
 private:
 	void UpdateDirection(float MoveDirection);
+
+	FTimerHandle StunTimer;
 };
