@@ -46,6 +46,32 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void APlayerCharacter::TakeDamage(int DamageAmount, float StunDuration)
+{
+	if (!IsAlive)
+	{
+		return;
+	}
+
+	UpdateHP(HitPoints - DamageAmount);
+
+	if (HitPoints <= 0)
+	{
+		UpdateHP(0);
+
+		IsAlive = false;
+		CanMove = false;
+		CanAttack = false;
+
+		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CaptainStateMachine"));
+		EnableAttackCollisionBox(false);
+	}
+	else
+	{
+		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CaptainStateMachine"));
+	}
+}
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -125,6 +151,11 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 	CanAttack = true;
 	CanMove = true;
 	// EnableAttackCollisionBox(false);
+}
+
+void APlayerCharacter::UpdateHP(int NewHP)
+{
+	HitPoints = NewHP;
 }
 
 void APlayerCharacter::UpdateDirection(float MoveDirection)

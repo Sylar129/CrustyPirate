@@ -206,8 +206,7 @@ void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor
 
 	if (Player)
 	{
-		// Player->TakeDamage(20);
-		UE_LOG(LogTemp, Display, TEXT("player take damage"));
+		Player->TakeDamage(AttackDamage, AttackStunDuration);
 	}
 }
 

@@ -24,6 +24,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	void TakeDamage(int DamageAmount, float StunDuration);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
@@ -44,6 +46,8 @@ protected:
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	void OnAttackOverrideAnimEnd(bool Completed);
+
+	void UpdateHP(int NewHP);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpringArmComponent* SpringArm;
@@ -74,6 +78,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanAttack = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int HitPoints = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AttackDamage = 25;
