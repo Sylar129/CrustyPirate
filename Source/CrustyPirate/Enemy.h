@@ -11,6 +11,7 @@
 class USphereComponent;
 class APlayerCharacter;
 class UTextRenderComponent;
+class UBoxComponent;
 
 UCLASS()
 class CRUSTYPIRATE_API AEnemy : public APaperZDCharacter
@@ -40,17 +41,27 @@ protected:
 	void Stun(float DurationInSeconds);
 	void OnStunTimerTimeout();
 
-	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
-
 	void Attack();
 	void OnAttackCooldownTimerTimeout();
 	void OnAttackOverrideAnimEnd(bool Completed);
+
+	UFUNCTION()
+	void AttackBoxOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+	void EnableAttackCollisionBox(bool Enabled);
+
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* PlayerDetectorSphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UTextRenderComponent* HPText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* AttackCollisionBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	APlayerCharacter* FollowTarget;

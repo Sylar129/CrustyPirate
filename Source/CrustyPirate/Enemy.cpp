@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "PaperZDAnimInstance.h"
 #include "PlayerCharacter.h"
+#include "Components/BoxComponent.h"
 #include "Components/TextRenderComponent.h"
 
 AEnemy::AEnemy()
@@ -14,6 +15,9 @@ AEnemy::AEnemy()
 
 	HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
 	HPText->SetupAttachment(RootComponent);
+
+	AttackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollisionBox"));
+	AttackCollisionBox->SetupAttachment(RootComponent);
 }
 
 void AEnemy::BeginPlay()
@@ -26,6 +30,9 @@ void AEnemy::BeginPlay()
 	UpdateHP(HitPoints);
 
 	OnAttackOverrideEndDelegate.BindUObject(this, &AEnemy::OnAttackOverrideAnimEnd);
+
+	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::AttackBoxOverlapBegin);
+	EnableAttackCollisionBox(false);
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -78,6 +85,8 @@ void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
 		HPText->SetHiddenInGame(true);
 
 		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
+
+		EnableAttackCollisionBox(false);
 	}
 }
 
@@ -153,6 +162,7 @@ void AEnemy::Stun(float DurationInSeconds)
 
 	GetWorldTimerManager().SetTimer(StunTimer, this, &AEnemy::OnStunTimerTimeout, 1.0f, false, DurationInSeconds);
 	GetAnimInstance()->StopAllAnimationOverrides();
+	EnableAttackCollisionBox(false);
 }
 
 void AEnemy::OnStunTimerTimeout()
@@ -186,5 +196,31 @@ void AEnemy::OnAttackOverrideAnimEnd(bool Completed)
 	if (IsAlive)
 	{
 		CanMove = true;
+	}
+}
+
+void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FrameSweep, const FHitResult& SweepResult)
+{
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+
+	if (Player)
+	{
+		// Player->TakeDamage(20);
+		UE_LOG(LogTemp, Display, TEXT("player take damage"));
+	}
+}
+
+void AEnemy::EnableAttackCollisionBox(bool Enabled)
+{
+	if (Enabled)
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	}
+	else
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	}
 }
