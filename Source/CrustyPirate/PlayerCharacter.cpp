@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 #include "Enemy.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -39,6 +40,19 @@ void APlayerCharacter::BeginPlay()
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 	EnableAttackCollisionBox(false);
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
+
+	if (PlayerHUDClass)
+	{
+		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
+		if (PlayerHUDWidget)
+		{
+			PlayerHUDWidget->AddToPlayerScreen();
+
+			PlayerHUDWidget->SetHP(HitPoints);
+			PlayerHUDWidget->SetDiamonds(50);
+			PlayerHUDWidget->SetLevel(1);
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -157,6 +171,7 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 void APlayerCharacter::UpdateHP(int NewHP)
 {
 	HitPoints = NewHP;
+	PlayerHUDWidget->SetHP(HitPoints);
 }
 
 void APlayerCharacter::Stun(float DurationInSeconds)

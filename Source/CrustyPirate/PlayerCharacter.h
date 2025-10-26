@@ -6,6 +6,9 @@
 #include "PaperZDCharacter.h"
 #include "PaperZDAnimInstance.h"
 #include "Engine/TimerHandle.h"
+
+#include "PlayerHUD.h"
+
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
@@ -76,6 +79,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperZDAnimSequence* AttackAnimSequence;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerHUD> PlayerHUDClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPlayerHUD* PlayerHUDWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
