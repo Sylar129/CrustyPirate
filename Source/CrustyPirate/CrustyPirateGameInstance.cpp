@@ -6,3 +6,8 @@ void UCrustyPirateGameInstance::SetHP(int NewHP)
 {
 	PlayerHP = NewHP;
 }
+
+void UCrustyPirateGameInstance::AddDiamond(int Amount)
+{
+	CollectedDiamonds += Amount;
+}

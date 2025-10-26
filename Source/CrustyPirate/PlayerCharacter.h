@@ -115,6 +115,7 @@ protected:
 
 private:
 	void UpdateDirection(float MoveDirection);
+	void UnlockDoubleJump();
 
 	FTimerHandle StunTimer;
 };

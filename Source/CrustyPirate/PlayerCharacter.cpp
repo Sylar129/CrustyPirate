@@ -45,6 +45,11 @@ void APlayerCharacter::BeginPlay()
 	if (MyGameInstance)
 	{
 		HitPoints = MyGameInstance->PlayerHP;
+		if (!MyGameInstance->IsDoubleJumpUnlocked)
+		{
+			UnlockDoubleJump();
+			MyGameInstance->IsDoubleJumpUnlocked = true;
+		}
 	}
 
 	if (PlayerHUDClass)
@@ -55,7 +60,7 @@ void APlayerCharacter::BeginPlay()
 			PlayerHUDWidget->AddToPlayerScreen();
 
 			PlayerHUDWidget->SetHP(HitPoints);
-			PlayerHUDWidget->SetDiamonds(50);
+			PlayerHUDWidget->SetDiamonds(MyGameInstance->CollectedDiamonds);
 			PlayerHUDWidget->SetLevel(1);
 		}
 	}
@@ -100,10 +105,18 @@ void APlayerCharacter::CollectItem(CollectableType Type)
 	switch (Type)
 	{
 		case CollectableType::Diamond:
+			MyGameInstance->AddDiamond(1);
+			PlayerHUDWidget->SetDiamonds(MyGameInstance->CollectedDiamonds);
 			break;
 		case CollectableType::HealthPotion:
+			UpdateHP(HitPoints + 25);
 			break;
 		case CollectableType::DoubleJumpUpgrade:
+			if (!MyGameInstance->IsDoubleJumpUnlocked)
+			{
+				UnlockDoubleJump();
+				MyGameInstance->IsDoubleJumpUnlocked = true;
+			}
 			break;
 		default:
 			break;
@@ -235,4 +248,9 @@ void APlayerCharacter::UpdateDirection(float MoveDirection)
 			Controller->SetControlRotation(FRotator(CurrentRotation.Pitch, 0.0f, CurrentRotation.Roll));
 		}
 	}
+}
+
+void APlayerCharacter::UnlockDoubleJump()
+{
+	JumpMaxCount = 2;
 }

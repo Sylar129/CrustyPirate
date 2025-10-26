@@ -19,5 +19,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int PlayerHP = 100;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int CollectedDiamonds = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsDoubleJumpUnlocked = false;
+
 	void SetHP(int NewHP);
+	void AddDiamond(int Amount);
 };
