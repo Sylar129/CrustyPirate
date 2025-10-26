@@ -61,7 +61,7 @@ void APlayerCharacter::BeginPlay()
 
 			PlayerHUDWidget->SetHP(HitPoints);
 			PlayerHUDWidget->SetDiamonds(MyGameInstance->CollectedDiamonds);
-			PlayerHUDWidget->SetLevel(1);
+			PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
 		}
 	}
 }
@@ -91,6 +91,8 @@ void APlayerCharacter::TakeDamage(int DamageAmount, float StunDuration)
 
 		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CaptainStateMachine"));
 		EnableAttackCollisionBox(false);
+
+		GetWorldTimerManager().SetTimer(RestartTimer, [this]() { MyGameInstance->RestartGame(); }, 3.0f, false);
 	}
 	else
 	{

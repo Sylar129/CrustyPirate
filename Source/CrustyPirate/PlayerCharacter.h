@@ -118,4 +118,5 @@ private:
 	void UnlockDoubleJump();
 
 	FTimerHandle StunTimer;
+	FTimerHandle RestartTimer;
 };
