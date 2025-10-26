@@ -41,6 +41,12 @@ void APlayerCharacter::BeginPlay()
 	EnableAttackCollisionBox(false);
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 
+	MyGameInstance = Cast<UCrustyPirateGameInstance>(GetGameInstance());
+	if (MyGameInstance)
+	{
+		HitPoints = MyGameInstance->PlayerHP;
+	}
+
 	if (PlayerHUDClass)
 	{
 		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
@@ -84,6 +90,23 @@ void APlayerCharacter::TakeDamage(int DamageAmount, float StunDuration)
 	else
 	{
 		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CaptainStateMachine"));
+	}
+}
+
+void APlayerCharacter::CollectItem(CollectableType Type)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ItemPickupSound);
+
+	switch (Type)
+	{
+		case CollectableType::Diamond:
+			break;
+		case CollectableType::HealthPotion:
+			break;
+		case CollectableType::DoubleJumpUpgrade:
+			break;
+		default:
+			break;
 	}
 }
 
@@ -172,6 +195,7 @@ void APlayerCharacter::UpdateHP(int NewHP)
 {
 	HitPoints = NewHP;
 	PlayerHUDWidget->SetHP(HitPoints);
+	MyGameInstance->SetHP(HitPoints);
 }
 
 void APlayerCharacter::Stun(float DurationInSeconds)

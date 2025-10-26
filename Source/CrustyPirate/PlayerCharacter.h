@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "CollectableItem.h"
 #include "CoreMinimal.h"
-#include "PaperZDCharacter.h"
-#include "PaperZDAnimInstance.h"
+#include "CrustyPirateGameInstance.h"
 #include "Engine/TimerHandle.h"
-
+#include "PaperZDAnimInstance.h"
+#include "PaperZDCharacter.h"
 #include "PlayerHUD.h"
+#include "Sound/SoundBase.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -29,6 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void TakeDamage(int DamageAmount, float StunDuration);
+	void CollectItem(CollectableType Type);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
@@ -85,6 +88,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPlayerHUD* PlayerHUDWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCrustyPirateGameInstance* MyGameInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* ItemPickupSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;

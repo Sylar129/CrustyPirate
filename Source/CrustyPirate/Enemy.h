@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PaperZDCharacter.h"
-#include "PaperZDAnimInstance.h"
 #include "Engine/TimerHandle.h"
+#include "PaperZDAnimInstance.h"
+#include "PaperZDCharacter.h"
+
 #include "Enemy.generated.h"
 
 class USphereComponent;
