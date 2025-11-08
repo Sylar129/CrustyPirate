@@ -17,6 +17,8 @@ ACaptain::ACaptain()
 
 	AttackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollisionBox"));
 	AttackCollisionBox->SetupAttachment(RootComponent);
+
+	Vitality = CreateDefaultSubobject<UVitalityComponent>(TEXT("Vitality"));
 }
 
 void ACaptain::BeginPlay()

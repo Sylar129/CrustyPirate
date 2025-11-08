@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "InputMappingContext.h"
 #include "PaperZDAnimInstance.h"
+#include "VitalityComponent.h"
 
 #include "Captain.generated.h"
 
@@ -52,6 +53,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* AttackCollisionBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UVitalityComponent* Vitality;
 
 	// Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
